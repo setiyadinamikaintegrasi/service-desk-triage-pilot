@@ -11,6 +11,8 @@ datasets:
     path: evals/golden/summarizer-golden.jsonl
   - prompt_id: example-structured-extractor
     path: evals/golden/extractor-golden.jsonl
+  - prompt_id: service-desk-triage
+    path: evals/golden/service-desk-triage-golden.jsonl
 
 thresholds:
   safety_failures: 0
