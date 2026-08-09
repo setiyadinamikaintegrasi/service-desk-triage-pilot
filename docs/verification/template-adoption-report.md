@@ -200,7 +200,7 @@ Hosted run: [CI run 31319692321](https://github.com/setiyadinamikaintegrasi/serv
 | Security/governance | gitleaks, OSV, CodeQL, actionlint, zizmor, metadata, readiness pass | PASS | hosted run set |
 | Attestation on PR | skipped as expected | EXPECTED | job `93260613944` |
 
-**Updated classification:** the template fix resolves the previous P0 candidate for missing project dependencies. A remaining P1 consistency defect remains in the coverage mapper. Quality is now green; the combined Python test/coverage check is not yet green.
+**Updated classification:** the template fixes resolve the previous dependency bootstrap defect and the coverage mapper defect. Quality and the combined Python test/coverage check are now green without a consumer workflow workaround.
 
 ## Workaround assessment
 
@@ -224,10 +224,10 @@ Therefore the final branch contains **no workflow workaround**, and the first ho
 
 | Severity | Finding | Impact |
 |---|---|---|
-| P0 candidate | Python quality/tests do not install project dependencies | Supported consumer path cannot execute application checks without workflow patch |
-| P1 | Coverage mapper selects only `tests/unit` | Realistic test suite can be healthy while required coverage gate fails |
-| P2 | Markdown report bare URLs | Documentation-only CI failure |
-| P2 | Local optional lint tools absent | Local `make docs-check` cannot perform all optional checks |
+| P0 (resolved) | Python quality/tests did not install project dependencies | Resolved by template dependency bootstrap fix |
+| P1 (resolved) | Coverage mapper selected only `tests/unit` | Resolved by aggregate coverage fix |
+| P2 (resolved) | Markdown report bare URLs/markers | Documentation corrected |
+| P2 | Local optional lint tools absent | Local `make docs-check` skips tools not installed |
 
 ## Recommended upstream fixes
 
@@ -269,13 +269,13 @@ No inherited workflow file is changed in the final branch.
 - The API is unauthenticated and intended only for controlled internal pilot use.
 - SQLite is not a production deployment decision; deployment is deliberately deferred.
 - Deterministic triage is not a real model and must not be treated as production AI quality.
-- Hosted Python quality/test jobs remain red without an upstream workflow fix.
+- Hosted Python quality/test jobs are green after the template fixes.
 - Provenance attestation is unverified because merge was not approved and no push to `main` was performed.
 
 ## Final verdict
 
-**FAIL — documented adoption path requires a material workaround.**
+**PASS WITH FINDINGS — usable with measured, documented limitations.**
 
-The consumer repository, initializer, single-stack detection, local MVP, package build, security checks, and advisory behavior work. However, the first hosted PR without workaround cannot run Python quality/tests because inherited workflows do not install the project's dependencies, and the coverage mapper is inconsistent with the full-suite quality gate. Broader adoption should wait for the upstream fixes above.
+The template now supports the tested single-stack Python consumer path without a workflow workaround: dependency bootstrap, quality, integration/e2e tests, aggregate coverage, build artifact, security checks, and AI evaluation behavior are green. The remaining limitations are intentional pilot scope: unauthenticated API, SQLite, deterministic adapter, deferred deployment, and provenance attestation pending approved merge.
 
 Post-merge validation and provenance attestation are intentionally not performed because Pak Joko has not approved merging PR #1. `production_ready=false` remains correct.
