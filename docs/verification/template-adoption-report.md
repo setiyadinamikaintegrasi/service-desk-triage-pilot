@@ -173,7 +173,7 @@ PR: [#1](https://github.com/setiyadinamikaintegrasi/service-desk-triage-pilot/pu
 | AI evaluation | Provider-neutral skip | Passed advisory skeleton; no provider called | PASS | [Certain] run `31316777117`, job `93253206803` |
 | Security | No secrets/vulnerabilities/workflow issues | gitleaks, OSV, CodeQL, actionlint, zizmor passed | PASS | [Certain] hosted jobs |
 | Governance | Docs/readiness/title | Passed | PASS | [Certain] hosted jobs |
-| Markdown/link/TODO | Clean docs | Failed on two bare URLs in this report | FAIL | [Certain] run `31316777109`, job `93253207020` |
+| Markdown/link/marker scan | Clean docs | Failed because the report contained the literal marker name in its evidence table | FAIL | [Certain] run `31317018690`, job `93253810459` |
 | Monorepo workflow | Skip for single stack | Skipped | PASS | [Certain] run `31316777232`, job `93253224462` |
 | PR attestation | Skip on pull request | Skipped | EXPECTED | [Certain] run `31316777232`, job `93253278015` |
 
