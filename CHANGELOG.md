@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Added the internal Service Desk Triage Pilot MVP with FastAPI, SQLite,
+  validated ticket APIs, deterministic triage adapter, prompt registry entry,
+  schemas, golden cases, and Python package metadata.
+- Added pilot documentation, ADR, threat assumptions, and OpenAPI contract.
+
+### Limitations
+
+- The application is internal pilot-only and not production-ready.
+- Authentication, deployment, real model providers, and production readiness
+  evidence are intentionally deferred; `production_ready=false` remains
+  expected.
+
+### Added
 - Added a checked-in consumer monorepo fixture and regression contract covering
   version-2 component resolution for Go and Node.js.
 - Added framework artifact conventions for Next.js, Nuxt, and Angular,

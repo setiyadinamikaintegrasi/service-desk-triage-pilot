@@ -79,8 +79,32 @@ prompts:
       - "Refuse if the document contains disallowed content."
       - "Do not include PII in the response."
     evaluation_dataset: evals/golden/extractor-golden.jsonl
+    deprecation_status: active
+
+  - id: service-desk-triage
+    name: Service Desk Ticket Triage
+    purpose: >-
+      Classify an internal service-desk ticket into a category, priority,
+      concise summary, confidence, and auditable reasoning code.
+    version: 0.1.0
+    owner: "@setiyadijoko"
+    prompt_ref: tasks/service-desk-triage.md
+    system_prompt_ref: system/base-safety.md
+    input:
+      schema_ref: schemas/service-desk-triage-input.json
+      description: Ticket title, description, and reporter.
+    output:
+      schema_ref: schemas/service-desk-triage-output.json
+      description: Validated category, priority, summary, confidence, and reasoning code.
+    model_compatibility:
+      - deterministic-adapter
+    safety_constraints:
+      - "Do not invent facts, credentials, or remediation actions."
+      - "Validate output against the JSON schema before persistence."
+      - "The default pilot implementation does not call a model provider."
+    evaluation_dataset: evals/golden/service-desk-triage-golden.jsonl
     changelog:
       - version: 0.1.0
-        date: 2026-08-06
-        change: "Initial example entry demonstrating structured-output validation."
+        date: 2026-08-09
+        change: "Initial deterministic pilot contract."
     deprecation_status: active

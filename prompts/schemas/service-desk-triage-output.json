@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ServiceDeskTriageOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["category", "priority", "summary", "confidence", "reasoning_code"],
+  "properties": {
+    "category": {"type": "string", "minLength": 1, "maxLength": 80},
+    "priority": {"enum": ["critical", "high", "medium", "low"]},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 500},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "reasoning_code": {"type": "string", "minLength": 1, "maxLength": 120}
+  }
+}

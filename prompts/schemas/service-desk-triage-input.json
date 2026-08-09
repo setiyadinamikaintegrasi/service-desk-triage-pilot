@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ServiceDeskTriageInput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "description", "reporter"],
+  "properties": {
+    "title": {"type": "string", "minLength": 1, "maxLength": 200},
+    "description": {"type": "string", "minLength": 1, "maxLength": 4000},
+    "reporter": {"type": "string", "minLength": 1, "maxLength": 320}
+  }
+}
