@@ -219,6 +219,40 @@ Therefore the final branch contains **no workflow workaround**, and the first ho
 
 These upstream changes are recommendations only; none were made in `template-ai-native`.
 
+## Files changed
+
+- `.template/project.yaml`
+- `pyproject.toml`
+- `src/service_desk_triage/` runtime package
+- `tests/` unit, integration, e2e, and evaluation tests
+- `prompts/` registry, prompt, and JSON schemas
+- `evals/` configuration and five golden cases
+- `PRODUCT.md`, `DESIGN.md`, `ARCHITECTURE.md`, `README.md`, `CHANGELOG.md`
+- `docs/api/openapi.yaml`
+- `docs/security/threat-model.md`
+- `docs/adr/0008-adopt-python-fastapi-sqlite-deterministic-triage.md`
+- `docs/verification/template-adoption-report.md`
+
+No inherited workflow file is changed in the final branch.
+
+## Commands actually executed
+
+- `gh repo create ... --public --template ... --clone`; manual `git clone` fallback after gh clone exit 128
+- required file reads and baseline: `make setup`, `make ci`, `make docs-check`, `make test-scripts`, `scripts/detect-stack.sh`
+- initializer and rejected second initializer
+- Python 3.12 venv and `pip install -e ".[dev]"`
+- `pytest`, `make format-check`, `make lint`, `make typecheck`, `make test-unit`, `make test-integration`, `make test-e2e`, `make test-coverage`, `make build`, `make ci`, `make docs-check`, `make test-scripts`, `evals/run-evals.sh --check`, `git diff --check`
+- `gitleaks detect --source .`
+- `gh pr create`, `gh pr checks 1 --watch`, and hosted job log inspection
+
+## Remaining risks
+
+- The API is unauthenticated and intended only for controlled internal pilot use.
+- SQLite is not a production deployment decision; deployment is deliberately deferred.
+- Deterministic triage is not a real model and must not be treated as production AI quality.
+- Hosted Python quality/test jobs remain red without an upstream workflow fix.
+- Provenance attestation is unverified because merge was not approved and no push to `main` was performed.
+
 ## Final verdict
 
 **FAIL — documented adoption path requires a material workaround.**
