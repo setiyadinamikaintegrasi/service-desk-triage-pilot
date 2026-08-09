@@ -1,8 +1,8 @@
 # Template Adoption Verification Report
 
 **Project:** Service Desk Triage Pilot
-**Repository:** https://github.com/setiyadinamikaintegrasi/service-desk-triage-pilot
-**Template:** https://github.com/setiyadijoko/template-ai-native
+**Repository:** [service-desk-triage-pilot](https://github.com/setiyadinamikaintegrasi/service-desk-triage-pilot)
+**Template:** [template-ai-native](https://github.com/setiyadijoko/template-ai-native)
 **Branch:** `feat/bootstrap-service-desk-triage`
 **Status:** Pilot implementation; not production-ready
 
@@ -159,28 +159,70 @@ Classification: likely template/tool-mapping defect or an intentional distinctio
 - No secret or `AI_EVAL_API_KEY` was configured.
 - No merge or deployment was performed.
 
-## Hosted PR evidence
+## Hosted PR evidence — first run without workaround
 
-To be completed after the first PR is opened. Required checks to classify include:
+PR: [#1](https://github.com/setiyadinamikaintegrasi/service-desk-triage-pilot/pull/1)
 
-- Detect stack;
-- Python quality;
-- Python tests + coverage;
-- Python build and artifact;
-- PR title and required docs;
-- markdown/link checks;
-- actionlint and zizmor;
-- gitleaks, OSV Scanner, CodeQL;
-- production-readiness contract;
-- AI evaluation skip behavior;
-- advisory graph/code review behavior.
+| Test | Expected | Actual | Status | Evidence Classification |
+|---|---|---|---|---|
+| Detect stack | Python routed | `python`; monorepo skipped | PASS | [Certain] workflow run `31316777232` |
+| Python quality | Project quality gate executes | Ruff passed; mypy failed before project install: `No module named 'pydantic'` | FAIL | [Certain] template workflow `ci-quality.yml:40` |
+| Python tests | Integration/e2e run | Failed before tests: `No module named 'fastapi'` | FAIL | [Certain] template workflow `ci-test.yml:40` |
+| Python coverage | >=80% | Not reached; local mapper evidence was 62.65% on unit-only scope | FAIL | [Certain]/[Likely] template mapper |
+| Python build | Artifact generated | Passed | PASS | [Certain] run `31316777232`, job `93253224456` |
+| AI evaluation | Provider-neutral skip | Passed advisory skeleton; no provider called | PASS | [Certain] run `31316777117`, job `93253206803` |
+| Security | No secrets/vulnerabilities/workflow issues | gitleaks, OSV, CodeQL, actionlint, zizmor passed | PASS | [Certain] hosted jobs |
+| Governance | Docs/readiness/title | Passed | PASS | [Certain] hosted jobs |
+| Markdown/link/TODO | Clean docs | Failed on two bare URLs in this report | FAIL | [Certain] run `31316777109`, job `93253207020` |
+| Monorepo workflow | Skip for single stack | Skipped | PASS | [Certain] run `31316777232`, job `93253224462` |
+| PR attestation | Skip on pull request | Skipped | EXPECTED | [Certain] run `31316777232`, job `93253278015` |
 
-## Final verdict placeholder
+### Root-cause classification
 
-The verdict must be one of:
+- Missing runtime project dependency installation is a **template defect, P0 candidate** when the documented supported Python path cannot run any project test or typecheck without workflow modification. The relevant inherited commands are `pip install ruff mypy pytest pytest-cov build`; they do not install `.[dev]` or runtime dependencies.
+- Unit-only coverage is a **template/tool-mapping defect, P1** for this pilot: full tests reach 97.59%, but the advertised 80% gate evaluates only `tests/unit` and fails at 62.65%.
+- Bare URLs were a **consumer documentation defect, P2**, now corrected in the follow-up commit.
 
-- PASS — ready for broader adoption;
-- PASS WITH FINDINGS — usable with measured gaps;
-- FAIL — documented adoption path requires a material workaround.
+## Workaround assessment
 
-No final verdict is issued until hosted PR checks and, after explicit human merge approval, main-branch artifact attestation are verified.
+A consumer workaround was tested locally after the first hosted run but was **not retained or pushed**. It changed `ci-quality.yml` and `ci-test.yml` to install `pip install -e '.[dev]'` and changed the coverage mapper to run the complete suite. That made application checks green locally, but `make test-scripts` then failed because the consumer-modified mapper no longer matched the inherited script contract. Keeping it would have hidden a template defect and introduced a new governance regression.
+
+Therefore the final branch contains **no workflow workaround**, and the first hosted run remains the authoritative no-workaround evidence.
+
+## Expected skips versus unexpected failures
+
+| Behavior | Classification |
+|---|---|
+| `production_ready=false` | Expected skeleton/deferred behavior |
+| Monorepo workflow skipped | Expected for single-stack consumer |
+| AI evaluation advisory skip | Expected skeleton/deferred behavior; provider-neutral contract passes |
+| PR attestation skipped | Expected; only push to `main` should attest |
+| Missing Python project dependencies in hosted jobs | Unexpected template defect |
+| Unit-only coverage mapper | Unexpected consistency gap/template defect |
+| Missing local optional markdown tools | Environment/local tooling skip, not consumer failure |
+
+## Severity table
+
+| Severity | Finding | Impact |
+|---|---|---|
+| P0 candidate | Python quality/tests do not install project dependencies | Supported consumer path cannot execute application checks without workflow patch |
+| P1 | Coverage mapper selects only `tests/unit` | Realistic test suite can be healthy while required coverage gate fails |
+| P2 | Markdown report bare URLs | Documentation-only CI failure |
+| P2 | Local optional lint tools absent | Local `make docs-check` cannot perform all optional checks |
+
+## Recommended upstream fixes
+
+1. In Python reusable quality/test workflows, install the consumer package using `pip install -e '.[dev]'` when `pyproject.toml` exists; retain a documented fallback for skeletons.
+2. Make the Python coverage mapper use the configured `testpaths` or `tests`, not only `tests/unit`, or document that unit-only coverage is the intended policy.
+3. Add a template Python fixture with runtime dependencies and an integration test to prevent the missing-install regression.
+4. Add a hosted consumer fixture regression that exercises single-stack Python from template creation through build artifact.
+
+These upstream changes are recommendations only; none were made in `template-ai-native`.
+
+## Final verdict
+
+**FAIL — documented adoption path requires a material workaround.**
+
+The consumer repository, initializer, single-stack detection, local MVP, package build, security checks, and advisory behavior work. However, the first hosted PR without workaround cannot run Python quality/tests because inherited workflows do not install the project's dependencies, and the coverage mapper is inconsistent with the full-suite quality gate. Broader adoption should wait for the upstream fixes above.
+
+Post-merge validation and provenance attestation are intentionally not performed because Pak Joko has not approved merging PR #1. `production_ready=false` remains correct.
