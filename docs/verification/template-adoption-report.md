@@ -4,6 +4,7 @@
 **Repository:** [service-desk-triage-pilot](https://github.com/setiyadinamikaintegrasi/service-desk-triage-pilot)
 **Template:** [template-ai-native](https://github.com/setiyadijoko/template-ai-native)
 **Branch:** `feat/bootstrap-service-desk-triage`
+**Template commit tested:** `1f52cc091712d344c7879fdf83f710410365ee52`
 **Status:** Pilot implementation; not production-ready
 
 ## Audit objective
@@ -182,6 +183,24 @@ PR: [#1](https://github.com/setiyadinamikaintegrasi/service-desk-triage-pilot/pu
 - Missing runtime project dependency installation is a **template defect, P0 candidate** when the documented supported Python path cannot run any project test or typecheck without workflow modification. The relevant inherited commands are `pip install ruff mypy pytest pytest-cov build`; they do not install `.[dev]` or runtime dependencies.
 - Unit-only coverage is a **template/tool-mapping defect, P1** for this pilot: full tests reach 97.59%, but the advertised 80% gate evaluates only `tests/unit` and fails at 62.65%.
 - Bare URLs were a **consumer documentation defect, P2**, now corrected in the follow-up commit.
+
+## Re-test after template fix
+
+Template commit `1f52cc0` adds `scripts/setup-python-deps.sh` and updates the Python reusable workflows to install the consumer package and pinned fallback CI tools. Consumer commit `e5c62ef` synchronizes those changes.
+
+Hosted run: [CI run 31319692321](https://github.com/setiyadinamikaintegrasi/service-desk-triage-pilot/actions/runs/31319692321).
+
+| Test | Actual | Status | Evidence |
+|---|---|---|---|
+| Detect stack | `python`; monorepo skipped | PASS | job `93260552678` |
+| Python quality | format, lint, mypy, unit all pass after native dependency bootstrap | PASS | job `93260572889` |
+| Python build | Artifact build passed | PASS | job `93260572881` |
+| Python integration/e2e/coverage | integration/e2e execute, coverage fails at 62.65% because mapper still selects `tests/unit` | FAIL | job `93260572868` |
+| AI evaluation | advisory provider-neutral check passes | PASS | job `93260552373` |
+| Security/governance | gitleaks, OSV, CodeQL, actionlint, zizmor, metadata, readiness pass | PASS | hosted run set |
+| Attestation on PR | skipped as expected | EXPECTED | job `93260613944` |
+
+**Updated classification:** the template fix resolves the previous P0 candidate for missing project dependencies. A remaining P1 consistency defect remains in the coverage mapper. Quality is now green; the combined Python test/coverage check is not yet green.
 
 ## Workaround assessment
 
